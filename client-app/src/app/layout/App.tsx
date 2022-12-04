@@ -29,7 +29,7 @@ function App()
   }, [])
 
   function handleSelectActivity(id: string)
-  {
+  {    
       setSelectedActivity(activities.find(x => x.id === id));
   }
   function handleCancelSelectActivity()
@@ -48,13 +48,17 @@ function App()
   function handleCreateOrUpdateActivity(activity:Activity)
   {
     setIsWorking(true);
-    if(activity.id){
+    if(activity.id)
+    {
       agent.Activities.update(activity).then()
       {
-        setActivities([...activities.filter(x=> x.id !== activity.id),activity]);
-        setSelectedActivity(activity);
-        setEditMode(false);
-        setIsWorking(false);
+        agent.Activities.update(activity).then(() =>
+        {
+          setActivities([...activities.filter(x=> x.id !== activity.id),activity]);
+          setSelectedActivity(activity);
+          setEditMode(false);
+          setIsWorking(false); 
+        })      
       }
     }
     else{
@@ -78,7 +82,7 @@ function App()
     })
   }
 
-  if (loading) return <LoadingComponent content='Loading app' />
+  if (loading) return <LoadingComponent  content='Loading app' />
   return (    
     <>
     
@@ -95,7 +99,7 @@ function App()
           closeForm = {handleFormClose}
           createOrEdit = {handleCreateOrUpdateActivity}
           deleteActivity = {handleDeleteActivity}
-          isWorking={isWorking}          
+          isworking={isWorking}          
           />
         </Container>
     </>
