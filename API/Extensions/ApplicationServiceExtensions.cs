@@ -4,7 +4,8 @@ using MediatR;
 using Microsoft.OpenApi.Models;
 using Application.Core;
 using Microsoft.EntityFrameworkCore;
-
+using FluentValidation.AspNetCore;
+using FluentValidation;
 namespace API.Extensions
 {
     public static class ApplicationServiceExtensions
@@ -29,10 +30,11 @@ namespace API.Extensions
             );
             
             services.AddMediatR(typeof(List.Handler).Assembly);
-            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly); 
             services.AddOptions();
-            
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<Create>();
+
             return services;
         }
     }

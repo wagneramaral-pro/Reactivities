@@ -1,5 +1,8 @@
-import axios,{ AxiosResponse } from 'axios';
+import axios,{ AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'react-toastify';
 import { Activity } from '../models/activity';
+import { router } from '../router/Routes';
+import { store } from '../stores/store';
 
 /*const sleep = (delay:number) => {
     return new Promise((resolve) =>{
@@ -9,14 +12,51 @@ import { Activity } from '../models/activity';
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.response.use(async response => {
-    try{
         //await sleep(1500);
         return response;
+}, (error:AxiosError) =>{
+    const {data,status,statusText, config} = error.response as AxiosResponse;
+    switch(status)
+    {
+        case 400:
+            if(config.method === 'get' && data.errors.hasOwnProperty('id'))
+            {
+                router.navigate('/not-found');
+            }
+            if(data.errors)
+            {
+                const modalStateErrors = [];
+                for(const key in data.errors ){
+                    if(data.errors[key]){
+                        modalStateErrors.push(data.errors[key]);
+                    }
+                }
+                throw modalStateErrors.flat();
+            }
+            else{
+                toast.error(data);
+            }
+            break;
+        case 401:
+            toast.error('unauthorized');break;
+        case 403:
+            toast.error('forbiden');break;
+        case 404:
+            router.navigate('/not-found');
+            //toast.error('not found');
+            break;
+        case 500:
+            store.commonStore.setServerError({
+                statusCode: status,
+                message: statusText,
+                details: data
+            });
+            //store.commonStore.setServerError(data);
+            router.navigate('/server-error');
+            //toast.error('server error.');
+            break;
     }
-    catch(error){
-        console.log(error);
-        return await Promise.reject(error);
-    }
+    return Promise.reject(error);
 })
 const responseBody = <T> (response: AxiosResponse<T> ) => response.data;
 

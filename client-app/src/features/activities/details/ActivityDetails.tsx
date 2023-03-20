@@ -34,7 +34,7 @@ export default observer(function ActivityDetails(){
             </Grid.Column>
         </Grid>
         /*<Card fluid>
-            <Image src={`/assets/categoryImages/${activity.category}.jpg`} />
+            <Image src={`/assets/category/Images/${activity.category}.jpg`} />
             <Card.Content>
                 <Card.Header>{activity.title}</Card.Header>
                 <Card.Meta>

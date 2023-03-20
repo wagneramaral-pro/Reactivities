@@ -1,7 +1,50 @@
-using System;
+using API.Extensions;
+using API.Middleware;
+using Microsoft.EntityFrameworkCore;
+using Persistence;
+
+
+var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Services.AddControllers();
+builder.Services.AddApplicationServices(builder.Configuration);
+
+var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+
+if(app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+//app.UseCors("Cors Policy");
+app.UseCors(x => x
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    //.SetIsOriginAllowed(origin => true) // allow any origin
+                    .WithOrigins("https://localhost:3000")); // Allow only this origin can also have multiple origins separated with comma
+                    //.AllowCredentials()); // allow credentials
+
+app.UseAuthentication();
+
+app.MapControllers();
+
+using var scope = app.Services.CreateScope();
+
+var services = scope.ServiceProvider;
+
+
+await app.RunAsync();
+/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Middleware;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,8 +59,9 @@ namespace API
         public static async Task Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
-            var host = CreateHostBuilder(args).Build();
-            using var scope = host.Services.CreateScope();
+            var app = CreateHostBuilder(args).Build();
+
+            using var scope = app.Services.CreateScope();
 
             var services = scope.ServiceProvider;
             try{
@@ -31,7 +75,7 @@ namespace API
                 logger.LogError(ex, "An error occurred during migration.");
 
             }
-            await host.RunAsync();
+            await app.RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -41,4 +85,4 @@ namespace API
                     webBuilder.UseStartup<Startup>();
                 });
     }
-}
+}*/
