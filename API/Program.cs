@@ -26,8 +26,8 @@ if(app.Environment.IsDevelopment())
 app.UseCors(x => x
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    //.SetIsOriginAllowed(origin => true) // allow any origin
-                    .WithOrigins("https://localhost:3000")); // Allow only this origin can also have multiple origins separated with comma
+                    .SetIsOriginAllowed(origin => true)); // allow any origin
+                    //.WithOrigins("https://localhost:3000")); // Allow only this origin can also have multiple origins separated with comma
                     //.AllowCredentials()); // allow credentials
 
 app.UseAuthentication();
